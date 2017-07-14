@@ -1,74 +1,46 @@
-import datetime
+import json
 
-pathBase = ""
-
-def setPathBase(path)
-	pathBase = path
 
 class Entity:
-	
-	_id = 0
+	def jsonSerialize(self):
+		#dictFilter = dict((k, v) for k, v in self.__dict__.iteritems() if v is not None)
+		#print(dictFilter)
+		#return json.dumps(dictFilter)
+		return json.dumps(self, default = lambda o:dict((k,v) for k,v in o.__dict__.iteritems() if v is not None))
 
-	def __init__(self):
-		self.id = _id
-		_id += 1
-		selfLink = pathBase + '/' + __name__
 
 class Thing(Entity):
 
 	def __init__(self, name, description, properties = None,
-		location = None, historical_location = None, ):
-		super().__init__()
+		location = None, historical_location = None, dataStream = None):
 		#init the properties
 		self.name = name
 		self.description = description
 		self.properties = properties
 		#init the relations
-		self.locatons = [].append(locaton)
+		self.locatons = [].append(location)
 		self.historical_locations = [].append(historical_location)
-		self.dataStreams = [].append(dataStream)
+		self.dataStream = [].append(dataStream)
 
-	# def locate(self, location):
-	# 	if location.__name__ != 'Location':
-	# 		raise "The parameter passed in is not a Location entity."
-	# 	elif self.location != location:
-	# 		self.historical_location.append(HistoricalLocation(datetime.datetime.now().isoformat(), self))
-	# 		self.location = location
-
-	# def locate_historical(self, historical_location):
-	# 	if historical_location.__name__ = 'HistoricalLocation':
-	# 		self.historical_location.append(historical_location)
-	# 	else:
-	# 		raise "The parameter passed in is not a HistoricalLocation Entity."
-	
-	# def dataStream(self, dataStream):
-	# 	if dataStream.__name__ = 'DataStream':
-	# 		self.dataStream.append(dataStream)
-	# 	else:
-	# 		raise "The parameter passed in is not a Datastream Entity"
 
 class Location(Entity):
 
-	def __init__(self, name, description, 
+	def __init__(self, name, description, location,
 		thing = None, historical_location = None,
-		encodingType = "application/vnd.geo+json"):
-		super().__init__()
+		encodingType = "applicationvnd.geojson"):
 		#init the properties
 		self.name = name
 		self.description = description
 		self.encodingType = encodingType
-		self.historical_location = []
+		self.location = location
 		#init the relations
 		self.things = [].append(thing)
 		self.historical_location = [].append(historical_location)
 
-	def locate_historical(self, historical_location):
-		self.historical_location.append(historical_location)
 
 
 class HistoricalLocation(Entity):
 	def __init__(self, time, location, thing):
-		super().__init__()
 		self.time = time
 		self.thing = thing
 		self.location = [location]
@@ -76,9 +48,8 @@ class HistoricalLocation(Entity):
 
 class Datastream(Entity):
 	def __init__(self, name, description, unitOfMeasurement, observationType, 
-		thing, sensor, observedProperty, observation
+		thing, sensor, observedProperty, observation,
 		observatedArea = None, phenomenonTime = None, resultTime = None):
-		super.__init__()
 		#init the properties
 		self.name = name
 		self.description = description
@@ -98,17 +69,15 @@ class Datastream(Entity):
 
 
 class Sensor(Entity):
-	def __init__(self, name, description, encodingType, metadata, dataStream ):
-		super.__init__()
+	def __init__(self, name, description, encodingType = "application/pdf", metadata = " ", dataStream = None ):
 		self.name = name
 		self.description = description
 		self.encodingType = encodingType
 		self.metadata = metadata
 		self.dataStream = dataStream
 
-class ObservedProperty(Entity):
-	def __init__(self, name, definition, description, dataStream):
-		super.__init__()
+class ObservedPropertie(Entity):
+	def __init__(self, name, definition, description, dataStream = None):
 		self.name = name
 		self.definition = definition
 		self.description = description
@@ -118,7 +87,6 @@ class Observation(Entity):
 	def __init__(self, phenomenonTime, result, resultTime, 
 		dataStream, featureOfInterest,
 		resultQuality = None, validTime = None, parameters = None):
-		super().__init__()
 		#init the properties
 		self.phenomenonTime = phenomenonTime
 		self.result = result

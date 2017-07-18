@@ -48,21 +48,21 @@ class HistoricalLocation(Entity):
 
 class Datastream(Entity):
 	def __init__(self, name, description, unitOfMeasurement, observationType, 
-		thing, sensor, observedProperty, observation,
+		thing, sensor, observedProperty, observation = None,
 		observatedArea = None, phenomenonTime = None, resultTime = None):
 		#init the properties
 		self.name = name
 		self.description = description
 		self.unitOfMeasurement = unitOfMeasurement
-		self.observatedType = observationType
+		self.observationType = observationType
 		self.observatedArea = observatedArea
 		self.phenomenonTime = phenomenonTime
 		self.resultTime = resultTime
 		#init the relations
-		self.thing = thing
-		self.sensor = sensor
-		self.observedProperty = observedProperty
-		self.observation = observation
+		self.Thing = thing
+		self.Sensor = sensor
+		self.ObservedProperty = observedProperty
+		self.Observation = observation
 
 
 

@@ -4,15 +4,19 @@ from geojson import Point, Feature
 import urllib2
 
 def regist(entity):
-	print(1)
 	data = entity.jsonSerialize()
 	url = 'http://localhost:8080/SensorThingsServer-1.0/v1.0/' + entity.__class__.__name__ +'s'
-	print(url)
 	req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
 	f = urllib2.urlopen(req)
-	for x in f:
-		print(x)
+	responseHeader = f.info().headers[0]
 	f.close()
+	return responseHeader
+
+def getIOTid(response):
+	location = str(response)
+	idInString = location[location.find("(")+1:location.find(")")]
+	return int(idInString)
+
 
 def getserial():
   # Extract serial from cpuinfo file
@@ -36,24 +40,47 @@ serialNum = getserial()
 locationDescripton = "The start point of the sourcing node: " + serialNum + "."
 gpsCoordinate = GPS().getData()
 geoLocation = Feature(geometry = Point(gpsCoordinate))
-delattr(geoLocation, 'properties')
 location = Location(serialNum, locationDescripton, geoLocation)
-print(location.jsonSerialize())
-
 
 
 #Construct the Sensor entity
-sensor = Sensor("Tem" + serialNum , "The temperature sensor on the Raspi " + serialNum)
+sensor = Sensor("Temperatur Sensor " + serialNum , "The temperature sensor on the Raspi " + serialNum)
 
 #Construct the ObservedProperty entity
 observedProperty = ObservedPropertie("Temperatur", "http://dbpedia.org/page/Dew_point", "Temperature")
 
 #Construct the Thing entity
-name = serialNum
-thingDescription = "This is a sourcing node of Rapberry Pi with the serial number " + name + "."
-thing = Thing(name, thingDescription, location)
+thingName = serialNum
+thingDescription = "This is a sourcing node of Rapberry Pi with the serial number " + thingName + "."
+thing = Thing(thingName, thingDescription, location)
 
-regist(thing)
-regist(sensor)
-regist(location)
-regist(observedProperty)
+thingRep = regist(thing)
+thingID = getIOTid(thingRep)
+
+sensorRep = regist(sensor)
+sensorID = getIOTid(sensorRep)
+
+locationRep = regist(location)
+locationID = getIOTid(locationRep)
+
+observedPropertyRep = regist(observedProperty)
+observedPropertyID = getIOTid(observedPropertyRep)
+
+#Construct the Datastream entity
+unitOfMeaturement =  {
+      "name":
+  "degree Celsius",
+      "symbol":
+  "C",
+      "definition":
+  "http://unitsofmeasure.org/ucum.html#para-30"
+    }
+
+dataStream = Datastream("Datastream " + serialNum, 
+	"The datastream measured by the Raspi " + serialNum, 
+	unitOfMeaturement,
+	"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+	{"@iot.id": thingID}, {"@iot.id": sensorID}, {"@iot.id": observedPropertyID})
+
+print(dataStream.jsonSerialize())
+regist(dataStream)

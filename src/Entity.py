@@ -95,15 +95,15 @@ class Observation(Entity):
 		self.validTime = validTime
 		self.parameters = parameters
 		#init the relations
-		self.dataStream = dataStream
-		self.featureOfInterest = featureOfInterest
+		self.Datastream = dataStream
+		self.FeatureOfInterest = featureOfInterest
 
 
 
-class FeatureOfInterest(Entity):
-	def __init__(self, name, description, encodingType, feature, observation):
+class FeaturesOfInterest(Entity):
+	def __init__(self, name, description, encodingType, feature, observation = None):
 		self.name = name
 		self.description = description
 		self.encodingType = encodingType
 		self.feature = feature
-		self.observation = observation
+		self.observation = [].append(observation)

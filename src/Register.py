@@ -102,6 +102,11 @@ regist(foI)
 #set up the config file
 parser = SafeConfigParser()
 parser.read('../observation.ini')
-parser.set('entities', 'dataStreamID', str(dataStreamID))
+parser.set('register', 'dataStreamID', dataStreamID)
+parser.set('register', 'sensorID', sensorID)
+parser.set('register', 'thingID', thingID)
+parser.set('register', 'startLocationID', startLocationID)
+parser.set('register', 'registered', true)
+
 with open('../observation.ini', 'w') as configfile:
     parser.write(configfile)

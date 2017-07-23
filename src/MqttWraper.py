@@ -43,7 +43,10 @@ class Wrapper:
 
     #TODO: Implement!!!!! Calculate the grid id based on the gps coordinate
     def getFeatureOfInterest(self):
-        return 1
+        gps = GPS()
+        gridNum = gps.getGridNum()
+        gridID = (gridNum[0] - 1 ) * 8 * gridNum[2]
+        return gridID
 
 
 wrapper = Wrapper(2).mqtt_send_data()

@@ -36,5 +36,8 @@ for i in range(256):
 				"coordinates" : getGPSCoordinate(i)
 			}
 		}
-	}	
+	}
+	print('registering the ' + str(i) + ' foi.')	
 	regist(json.dumps(jsonString))
+
+print 'Register finished!'

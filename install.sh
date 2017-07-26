@@ -59,3 +59,5 @@ pip install libusb1
 #Daemon process in unix 
 pip install python-daemon
 pip install paho-mqtt
+#Install numpy for compute the grid from gps
+pip install numpy

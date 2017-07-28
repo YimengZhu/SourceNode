@@ -7,9 +7,10 @@ from ConfigParser import SafeConfigParser
 import sys
 
 
-def regist(entity):
+
+def regist(entity, path = 'http://localhost:8080'):
 	data = entity.jsonSerialize()
-	url = 'http://localhost:8080/SensorThingsServer-1.0/v1.0/' + entity.__class__.__name__ +'s'
+	url = path + '/SensorThingsServer-1.0/v1.0/' + entity.__class__.__name__ +'s'
 	if(isinstance(entity, FeaturesOfInterest)):
 		url = 'http://localhost:8080/SensorThingsServer-1.0/v1.0/FeaturesOfInterest'
 	req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
@@ -39,6 +40,10 @@ def getserial():
   return cpuserial
 
 
+#Set the path variable by the system argument
+path = sys.argv[1]
+
+
 #The following create a serie of entities. The identifier on each Raspi is the serial number
 serialNum = getserial()
 
@@ -60,16 +65,16 @@ thingName = serialNum
 thingDescription = "This is a sourcing node of Rapberry Pi with the serial number " + thingName + "."
 thing = Thing(thingName, thingDescription, location)
 
-thingRes = regist(thing)
+thingRes = regist(thing, path)
 thingID = getIOTid(thingRes)
 
-sensorRes = regist(sensor)
+sensorRes = regist(sensor, path)
 sensorID = getIOTid(sensorRes)
 
-locationRes = regist(location)
+locationRes = regist(location, path)
 locationID = getIOTid(locationRes)
 
-observedPropertyRes = regist(observedProperty)
+observedPropertyRes = regist(observedProperty, path)
 observedPropertyID = getIOTid(observedPropertyRes)
 
 #Construct the Datastream entity
@@ -88,7 +93,7 @@ dataStream = Datastream("Datastream " + serialNum,
 	"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
 	{"@iot.id": thingID}, {"@iot.id": sensorID}, {"@iot.id": observedPropertyID})
 
-dataStreamRes = regist(dataStream)
+dataStreamRes = regist(dataStream, path)
 dataStreamID = getIOTid(dataStreamRes)
 
 
@@ -110,3 +115,4 @@ parser.set('register', 'registered', true)
 
 with open('../observation.ini', 'w') as configfile:
     parser.write(configfile)
+ 

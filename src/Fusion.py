@@ -1,8 +1,8 @@
-import paho.mqtt.client as mqtt
-#from MqttWraper import Wrapper
-from datetime import datetime
-from GPSCollector import GPS
-import sqlite3
+import paho.mqtt.client as mqtt 
+from datetime import datetime 
+from GPSCollector import GPS 
+import sqlite3 
+from Wrapper import Wrapper
 
 dbconnect = sqlite3.connect("../sensorData.db")
 cursor = dbconnect.cursor()
@@ -33,11 +33,14 @@ def on_message(client, userdata, msg):
     elif len(result) == 1:
         print result[0][0]
 	newVal = ( result[0][0] + measurement ) / 2
-	
+	measurement = newVal
         cursor.execute("UPDATE sensorData SET value = ? WHERE gridID = ? AND topic = ?", (newVal, gridID, topic))        
     else:
         raise 'More than one entry for this area and topic is inserted in the database!'
-     
+    
+    wrapper = Wrapper(measurement)
+    wrapper.mqtt_send_data()
+    del wrapper
 
 client = mqtt.Client()
 client.on_connect = on_connect

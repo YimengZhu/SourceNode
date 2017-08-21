@@ -6,7 +6,7 @@ import ConfigParser
 
 class MqttConfig:
     'A class to configure the mqtt connection'
-    def __init__(self, hostname = 'localhost', port = 1883, qos = 2):
+    def __init__(self, hostname = '10.42.0.1', port = 1883, qos = 2):
         self.hostname = hostname
         self.port = port
         self.qos = qos
@@ -18,7 +18,7 @@ class Wrapper:
     def __init__(self, value, topic = 'v1.0/Observations', mqttConfig = MqttConfig()):
         config = ConfigParser.SafeConfigParser()
         config.read('../observation.ini')
-        dataStreamID = int(config.get('entities', 'datastreamid'))
+        dataStreamID = int(config.get('register', 'datastreamid'))
 
         self.observation = Observation(datetime.datetime.now().isoformat(),
             value,
@@ -33,6 +33,7 @@ class Wrapper:
 
     def mqtt_send_data(self):
         msg = self.observation.jsonSerialize();
+	print msg
         publisher.single(self.topic, msg, hostname=self.mqttConfig.hostname, port=self.mqttConfig.port, qos=self.mqttConfig.qos, client_id=self.mqttConfig.client_id)
 
     def formatMsg(self):
@@ -45,8 +46,9 @@ class Wrapper:
     def getFeatureOfInterest(self):
         gps = GPS()
         gridNum = gps.getGridNum()
-        gridID = (gridNum[0] - 1 ) * 8 * gridNum[2]
-        return gridID
+	#print gridNum
+        # gridID = (gridNum[0] - 1 ) * 8 * gridNum[2]
+        return 1
 
 
 wrapper = Wrapper(2).mqtt_send_data()

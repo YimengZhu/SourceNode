@@ -15,7 +15,7 @@ class MqttConfig:
 class Wrapper:
     'A generic wrapper class to capsulte all the sensor value to be ready for publishing to mqtt broker.'
    
-    def __init__(self, value, topic = 'v1.0/Observations', mqttConfig = MqttConfig()):
+    def __init__(self, value, observedType, topic = 'v1.0/Observations', mqttConfig = MqttConfig()):
         config = ConfigParser.SafeConfigParser()
         config.read('../observation.ini')
         dataStreamID = int(config.get('register', 'datastreamid'))
@@ -40,7 +40,9 @@ class Wrapper:
         result = "{topic: " + self.topic + ", value: " + str(self.value) + " }"
         return result
 
-
+    def get_dataStram_by_observedType(observedType)
+        config = ConfigParser.SafeConfigParser()
+        config.read('../observation.ini')
 
     #TODO: Implement!!!!! Calculate the grid id based on the gps coordinate
     def getFeatureOfInterest(self):

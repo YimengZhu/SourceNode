@@ -15,6 +15,15 @@ def on_connect(client, userdata, flags, rc):
 	#Subscribing in on_connect means that if the connection is losed,
 	#the subscription will be renewd on reconnection.
 	client.subscribe("Temperature")
+        client.subscribe("temp_in")
+        client.subscribe("abs_pressure")
+        client.subscribe("hum_in")
+        client.subscribe("temp_out")
+        client.subscribe("wind_dir")
+        client.subscribe("hum_out")
+        client.subscribe("wind_gust")
+        client.subscribe("wind_ave")
+        client.subscribe("rain")
 
 
 def on_message(client, userdata, msg):
@@ -22,6 +31,7 @@ def on_message(client, userdata, msg):
     #1. Listen on the mqtt broker to get the mesurement result.
     measurement = float(msg.payload)
     topic = msg.topic
+    timestamp = datetime.now()
         
     #2. get the value from the database based on the location and topic
     gridID = gps.getGridNum() 
@@ -29,12 +39,12 @@ def on_message(client, userdata, msg):
     result = cursor.fetchall()
     if len(result) == 0:
         print 'No entry in for this FOI and topic in the database. Use current value as the initial value.'
-        cursor.execute("INSERT INTO sensorData VALUES (?,?,?)", (gridID, topic,measurement))
+        cursor.execute("INSERT INTO sensorData VALUES (?,?,?,?)", (gridID, topic, measurement, timestamp))
     elif len(result) == 1:
         print result[0][0]
 	newVal = ( result[0][0] + measurement ) / 2
 	measurement = newVal
-        cursor.execute("UPDATE sensorData SET value = ? WHERE gridID = ? AND topic = ?", (newVal, gridID, topic))        
+        cursor.execute("UPDATE sensorData SET value = ? , updateTime = ? WHERE gridID = ? AND topic = ?", (newVal, timestamp, gridID, topic))        
     else:
         raise 'More than one entry for this area and topic is inserted in the database!'
     

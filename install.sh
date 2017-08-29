@@ -1,4 +1,4 @@
-#Shellscript to install all the dependencies for the sourcing node 
+#Shellscript to install all the dependencies for the sourcing node
 
 #!/bin/bash
 
@@ -39,7 +39,7 @@ pip install tzlocal
 #Install the USB library
 apt-get install libusb-1.0-0-dev
 pip install libusb1
-#Daemon process in unix 
+#Daemon process in unix
 pip install python-daemon
 pip install paho-mqtt
 #Install numpy for compute the grid from gps
@@ -60,16 +60,19 @@ systemctl disable gpsd.socket
 
 ##############################################################
 apt-get install sqlite3
+
 #TODO:Create the database for the fusion here.
-if [ -e ./sensorData.db ]
-then 
-    echo "Database for sensor data existed already!"
+if [ -f 'sensorData\.db' ]; then
+echo "Database for sensor data existed already!"
 else
-    sqlite3 sensorData.db "CREATE TABLE sensordata (gridID integer,topic string, value real, PRIMARY KEY (gridID, topic));"
+cd /home/pi/SourceNode
+sqlite3 sensorData.db "create table sensordata (gridID integer, topic string, value real, updateTime datetime, PRIMARY KEY (gridID, topic));"
 fi
 
-#Kill all the gpsd processes and restart it on the boot
-echo "killall gpsd" >> /etc/init.d
-echo "gpsd /dev/ttyS0 -F /var/run/gpsd.sock" >> /etc/init.d
 
-reboot
+
+#Kill all the gpsd processes and restart it on the boot
+sed -i -e '$i \/usr/bin/killall gpsd\n'  /etc/rc.local
+sed -i -e '$i \/usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock\n' /etc/rc.local
+
+#reboot

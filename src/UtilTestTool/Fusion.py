@@ -3,11 +3,6 @@ from datetime import datetime
 from GPSCollector import GPS 
 import sqlite3 
 from Wrapper import Wrapper
-from Entity import Observation
-import socket
-import zlib
-import pysmile
-
 
 dbconnect = sqlite3.connect("../sensorData.db")
 cursor = dbconnect.cursor()
@@ -46,6 +41,7 @@ def on_message(client, userdata, msg):
         print 'No entry in for this FOI and topic in the database. Use current value as the initial value.'
         cursor.execute("INSERT INTO sensorData VALUES (?,?,?,?)", (gridID, topic, measurement, timestamp))
     elif len(result) == 1:
+        print result[0][0]
 	newVal = ( result[0][0] + measurement ) / 2
 	measurement = newVal
         cursor.execute("UPDATE sensorData SET value = ? , updateTime = ? WHERE gridID = ? AND topic = ?", (newVal, timestamp, gridID, topic))        
@@ -53,19 +49,12 @@ def on_message(client, userdata, msg):
         raise 'More than one entry for this area and topic is inserted in the database!'
     
     #3. get the datastream Id based on the observed type
-    #datastreamID = getDatastreamID(topic)
-    observation = Observation(datetime.now().isoformat(),
-            measurement,
-            datetime.now().isoformat(),
-            {"@iot.id": 1},
-            {"@iot.id": 1})
-    
-    compressString = zlib.compress(pysmile.encode(observation.__dict__, 9))
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(compressString, ("10.42.0.1", 5005))
-    del sock
+    datastreamID = getDatastreamID(topic)
+    wrapper = Wrapper(measurement, datastreamID)
+    wrapper.mqtt_send_data()
+    del wrapper
 
-def getDatastreamID(observedType):
+def getDatastreamID(observedType)
     config = ConfigParser.SafeConfigParser()
     config.read('../observation.ini')
     dataStreamID = int(config.get('register', 'datastreamid'))

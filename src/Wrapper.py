@@ -53,4 +53,4 @@ class Wrapper:
         return 1
 
 
-wrapper = Wrapper(2).mqtt_send_data()
+#wrapper = Wrapper(2).mqtt_send_data()

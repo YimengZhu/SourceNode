@@ -1,3 +1,4 @@
+import struct
 import paho.mqtt.client as mqtt 
 from datetime import datetime 
 from GPSCollector import GPS 
@@ -7,7 +8,8 @@ from Entity import Observation
 import socket
 import zlib
 import pysmile
-
+import json
+import time
 
 dbconnect = sqlite3.connect("../sensorData.db")
 cursor = dbconnect.cursor()
@@ -60,9 +62,10 @@ def on_message(client, userdata, msg):
             {"@iot.id": 1},
             {"@iot.id": 1})
     
-    compressString = zlib.compress(pysmile.encode(observation.__dict__, 9))
+    message = getByteArray(measurement, 1, 1)
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(compressString, ("10.42.0.1", 5005))
+    sock.sendto(message, ("10.42.0.1", 5005))
     del sock
 
 def getDatastreamID(observedType):
@@ -71,7 +74,17 @@ def getDatastreamID(observedType):
     dataStreamID = int(config.get('register', 'datastreamid'))
 
 
-
+def getByteArray(measurement, datastreamID, foiID):
+    #This funciton generate a byte array like following:
+    #8 Bytes timestampe + 
+    timeHex = hex(int(time.mktime(datetime.now().timetuple())) - time.timezone)[2:].zfill(8)
+    datastreamHex = hex(datastreamID)[2:]
+    foiHex = hex(foiID).zfill(2)[2:].zfill(2)
+    valHex = hex(int(measurement * 100))[2:].zfill(3)
+    stringSum = timeHex + foiHex + datastreamHex + valHex
+    retVal = bytearray.fromhex(stringSum)
+    print len(retVal)
+    return retVal
 
 client = mqtt.Client()
 client.on_connect = on_connect

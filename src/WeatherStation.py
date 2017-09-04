@@ -14,8 +14,9 @@ class WS:
         new_data = self.weather_station.get_data(new_pos)
 
         for key, value in new_data.items():
-            publish.single(key, str(value))
-            print(key, value)
+            if value != None:
+                publish.single(key, str(value))
+                print(key, value)
 
 testWS = WS()
 while True:

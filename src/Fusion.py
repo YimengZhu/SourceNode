@@ -10,6 +10,8 @@ import zlib
 import pysmile
 import json
 import time
+import ConfigParser
+
 
 dbconnect = sqlite3.connect("../sensorData.db")
 cursor = dbconnect.cursor()
@@ -23,11 +25,11 @@ def on_connect(client, userdata, flags, rc):
 	#the subscription will be renewd on reconnection.
 	client.subscribe("Temperature")
         client.subscribe("temp_in")
-        client.subscribe("abs_pressure")
-        client.subscribe("hum_in")
+#        client.subscribe("abs_pressure")
+#        client.subscribe("hum_in")
         client.subscribe("temp_out")
         client.subscribe("wind_dir")
-        client.subscribe("hum_out")
+#        client.subscribe("hum_out")
         client.subscribe("wind_gust")
         client.subscribe("wind_ave")
         client.subscribe("rain")
@@ -56,13 +58,9 @@ def on_message(client, userdata, msg):
     
     #3. get the datastream Id based on the observed type
     #datastreamID = getDatastreamID(topic)
-    observation = Observation(datetime.now().isoformat(),
-            measurement,
-            datetime.now().isoformat(),
-            {"@iot.id": 1},
-            {"@iot.id": 1})
     
-    message = getByteArray(measurement, 1, 1)
+    datastreamID = getDatastreamID(topic)
+    message = getByteArray(measurement, datastreamID, 1)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(message, ("10.42.0.1", 5005))
@@ -71,7 +69,8 @@ def on_message(client, userdata, msg):
 def getDatastreamID(observedType):
     config = ConfigParser.SafeConfigParser()
     config.read('../observation.ini')
-    dataStreamID = int(config.get('register', 'datastreamid'))
+    dataStreamID = int(config.get('datastreamid', observedType))
+    return dataStreamID
 
 
 def getByteArray(measurement, datastreamID, foiID):
@@ -81,9 +80,11 @@ def getByteArray(measurement, datastreamID, foiID):
     datastreamHex = hex(datastreamID)[2:]
     foiHex = hex(foiID).zfill(2)[2:].zfill(2)
     valHex = hex(int(measurement * 100))[2:].zfill(3)
+    print measurement
     stringSum = timeHex + foiHex + datastreamHex + valHex
+    print stringSum
     retVal = bytearray.fromhex(stringSum)
-    print len(retVal)
+    print stringSum
     return retVal
 
 client = mqtt.Client()

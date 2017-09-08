@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package SourceNode;
+
+message Observation {
+ 
+  required float result = 1;
+  required int32 datastream = 2;
+  required int32 foi = 3;
+ 
+  message Timestamp {
+    required int32 year = 1;
+    required int32 month = 2;
+    required int32 day = 3;
+    required int32 hour = 4;
+    required int32 minute = 5;
+    required int32 secound = 6;
+    required int32 millisecound = 7;
+  } 
+  
+  required Timestamp phenomenonTime = 4;
+  required Timestamp resultTime = 5;
+}

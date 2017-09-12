@@ -19,64 +19,43 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='observation.proto',
   package='SourceNode',
   syntax='proto2',
-  serialized_pb=_b('\n\x11observation.proto\x12\nSourceNode\"\xac\x02\n\x0bObservation\x12\x0e\n\x06result\x18\x01 \x02(\x02\x12\x12\n\ndatastream\x18\x02 \x02(\x05\x12\x0b\n\x03\x66oi\x18\x03 \x02(\x05\x12\x39\n\x0ephenomenonTime\x18\x04 \x02(\x0b\x32!.SourceNode.Observation.Timestamp\x12\x35\n\nresultTime\x18\x05 \x02(\x0b\x32!.SourceNode.Observation.Timestamp\x1az\n\tTimestamp\x12\x0c\n\x04year\x18\x01 \x02(\x05\x12\r\n\x05month\x18\x02 \x02(\x05\x12\x0b\n\x03\x64\x61y\x18\x03 \x02(\x05\x12\x0c\n\x04hour\x18\x04 \x02(\x05\x12\x0e\n\x06minute\x18\x05 \x02(\x05\x12\x0f\n\x07secound\x18\x06 \x02(\x05\x12\x14\n\x0cmillisecound\x18\x07 \x02(\x05')
+  serialized_pb=_b('\n\x11observation.proto\x12\nSourceNode\"9\n\x0bObservation\x12\t\n\x01r\x18\x01 \x02(\x02\x12\t\n\x01\x64\x18\x02 \x02(\x05\x12\t\n\x01\x66\x18\x03 \x02(\x05\x12\t\n\x01t\x18\x04 \x02(\x03')
 )
 
 
 
 
-_OBSERVATION_TIMESTAMP = _descriptor.Descriptor(
-  name='Timestamp',
-  full_name='SourceNode.Observation.Timestamp',
+_OBSERVATION = _descriptor.Descriptor(
+  name='Observation',
+  full_name='SourceNode.Observation',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='year', full_name='SourceNode.Observation.Timestamp.year', index=0,
-      number=1, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
+      name='r', full_name='SourceNode.Observation.r', index=0,
+      number=1, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='month', full_name='SourceNode.Observation.Timestamp.month', index=1,
+      name='d', full_name='SourceNode.Observation.d', index=1,
       number=2, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='day', full_name='SourceNode.Observation.Timestamp.day', index=2,
+      name='f', full_name='SourceNode.Observation.f', index=2,
       number=3, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='hour', full_name='SourceNode.Observation.Timestamp.hour', index=3,
-      number=4, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='minute', full_name='SourceNode.Observation.Timestamp.minute', index=4,
-      number=5, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='secound', full_name='SourceNode.Observation.Timestamp.secound', index=5,
-      number=6, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='millisecound', full_name='SourceNode.Observation.Timestamp.millisecound', index=6,
-      number=7, type=5, cpp_type=1, label=2,
+      name='t', full_name='SourceNode.Observation.t', index=3,
+      number=4, type=3, cpp_type=2, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -93,88 +72,19 @@ _OBSERVATION_TIMESTAMP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=212,
-  serialized_end=334,
+  serialized_start=33,
+  serialized_end=90,
 )
 
-_OBSERVATION = _descriptor.Descriptor(
-  name='Observation',
-  full_name='SourceNode.Observation',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='result', full_name='SourceNode.Observation.result', index=0,
-      number=1, type=2, cpp_type=6, label=2,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='datastream', full_name='SourceNode.Observation.datastream', index=1,
-      number=2, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='foi', full_name='SourceNode.Observation.foi', index=2,
-      number=3, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='phenomenonTime', full_name='SourceNode.Observation.phenomenonTime', index=3,
-      number=4, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='resultTime', full_name='SourceNode.Observation.resultTime', index=4,
-      number=5, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[_OBSERVATION_TIMESTAMP, ],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto2',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=34,
-  serialized_end=334,
-)
-
-_OBSERVATION_TIMESTAMP.containing_type = _OBSERVATION
-_OBSERVATION.fields_by_name['phenomenonTime'].message_type = _OBSERVATION_TIMESTAMP
-_OBSERVATION.fields_by_name['resultTime'].message_type = _OBSERVATION_TIMESTAMP
 DESCRIPTOR.message_types_by_name['Observation'] = _OBSERVATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Observation = _reflection.GeneratedProtocolMessageType('Observation', (_message.Message,), dict(
-
-  Timestamp = _reflection.GeneratedProtocolMessageType('Timestamp', (_message.Message,), dict(
-    DESCRIPTOR = _OBSERVATION_TIMESTAMP,
-    __module__ = 'observation_pb2'
-    # @@protoc_insertion_point(class_scope:SourceNode.Observation.Timestamp)
-    ))
-  ,
   DESCRIPTOR = _OBSERVATION,
   __module__ = 'observation_pb2'
   # @@protoc_insertion_point(class_scope:SourceNode.Observation)
   ))
 _sym_db.RegisterMessage(Observation)
-_sym_db.RegisterMessage(Observation.Timestamp)
 
 
 # @@protoc_insertion_point(module_scope)

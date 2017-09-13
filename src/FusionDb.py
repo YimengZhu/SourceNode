@@ -17,21 +17,6 @@ dbconnect = sqlite3.connect("../sensorData.db")
 cursor = dbconnect.cursor()
 gps = GPS()
 
-foi = gps.getGridNum()
-
-measurements = {'Temperature':None, 
-		'temp_in':None, 
-		'abs_pressure':None, 
-		'hum_in':None, 
-		'temp_out':None
-		'wind_dir':None,
-		'hum_out':None,
-		'wind_gust':None,
-		'wind_ave':None,
-		'rain':None
-		 }
-
-
 #The callback for when the client receives a CONNACK response rc from the server.
 def on_connect(client, userdata, flags, rc):
 	print("Connected with result code " + str(rc))
@@ -40,26 +25,19 @@ def on_connect(client, userdata, flags, rc):
 	#the subscription will be renewd on reconnection.
 	client.subscribe("Temperature")
         client.subscribe("temp_in")
-        client.subscribe("abs_pressure")
-        client.subscribe("hum_in")
+#        client.subscribe("abs_pressure")
+#        client.subscribe("hum_in")
         client.subscribe("temp_out")
         client.subscribe("wind_dir")
-        client.subscribe("hum_out")
+#        client.subscribe("hum_out")
         client.subscribe("wind_gust")
         client.subscribe("wind_ave")
         client.subscribe("rain")
 
 
 def on_message(client, userdata, msg):
-
     #This callback do the following:
-    #1. check wether the sensor is in a new foi. If yes, create a new dictionay for the measurements.
-    global foi, gps, measurements
-    if foi != gps.getGridNum():
-        for key, value in measurements:
-            value = None
-    
-    #2. get the mesurement message from the mqtt broker.
+    #1. Listen on the mqtt broker to get the mesurement result.
     measurement = float(msg.payload)
     topic = msg.topic
     timestamp = datetime.now()

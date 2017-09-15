@@ -44,7 +44,8 @@ pip install python-daemon
 pip install paho-mqtt
 #Install numpy for compute the grid from gps
 pip install numpy
-
+#protocol buffer
+pip install protobuf
 
 
 ##############################################################

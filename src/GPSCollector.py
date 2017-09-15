@@ -49,7 +49,7 @@ class GPS:
 #		gpsKoordinate = self.getData()
 #		result = rotationMatrix.dot(gpsKoordinate - np.array[8.8, 47.65])
 #		np.rint(result).tolist()
-		return 1
+		return 2589
 
 #gps = GPS()
 #gps.synchRaspiTime()

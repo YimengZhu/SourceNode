@@ -68,31 +68,21 @@ def on_message(client, userdata, msg):
     else: 
         measurements[topic] = measurement
 
-    #. get the value from the database based on the location and topic
-#    gridID = gps.getGridNum() 
-#    cursor.execute("SELECT value FROM sensorData WHERE gridID=? And topic=?", (gridID, topic))
-#    result = cursor.fetchall()
-#    if len(result) == 0:
-#        print 'No entry in for this FOI and topic in the database. Use current value as the initial value.'
-#        cursor.execute("INSERT INTO sensorData VALUES (?,?,?,?)", (gridID, topic, measurement, timestamp))
-#    elif len(result) == 1:
-#	newVal = ( result[0][0] + measurement ) / 2
-#	measurement = newVal
-#        cursor.execute("UPDATE sensorData SET value = ? , updateTime = ? WHERE gridID = ? AND topic = ?", (newVal, timestamp, gridID, topic))        
-#    else:
-#        raise 'More than one entry for this area and topic is inserted in the database!'
-    
     #4. get the datastream Id based on the observed type    
     datastreamID = getDatastreamID(topic)
-    message = getByteArray(measurements[topic], datastreamID, 2589)
+    foiID = gps.getGridNum()
+    timestamp = int(round(time.time() * 1000))
+
+    message = getByteArray(measurements[topic], datastreamID, 2589, timestamp)
     print 'Length of of the message to be transfered: ' + str(len(message))
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(message, ("10.42.0.1", 5005))
     del sock
-
-def logMeasurement(result, foi, datastream, time):
     
-
+    #5. log the raw data to the sqlite database
+    cursor.execute("INSERT INTO rawData VALUES (?,?,?,?)", (timestamp, datastreamID, foiID, measurement))
+    dbconnect.commit()
+    
 def getDatastreamID(observedType):
     config = ConfigParser.SafeConfigParser()
     config.read('../observation.ini')
@@ -100,12 +90,12 @@ def getDatastreamID(observedType):
     return dataStreamID
 
 
-def getByteArray(measurement, datastreamID, foiID):
+def getByteArray(measurement, datastreamID, foiID, timestamp):
     observation = observation_pb2.Observation()
     observation.r = measurement
     observation.d = datastreamID
     observation.f = foiID
-    observation.t = int(round(time.time() * 1000)) 
+    observation.t = timestamp
     return observation.SerializeToString()   
 
 client = mqtt.Client()

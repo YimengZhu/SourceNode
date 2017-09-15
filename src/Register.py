@@ -1,48 +1,50 @@
+
 from Entity import *
 from GPSCollector import *
 from geojson import Point, Feature
 import urllib2
 import os
-from ConfigParser import SafeConfigParser
+import ConfigParser
 import sys
+import re
 
 
-
-def regist(entity, path = 'http://localhost:8080'):
-	data = entity.jsonSerialize()
-	url = path + '/SensorThingsServer-1.0/v1.0/' + entity.__class__.__name__ +'s'
-	if(isinstance(entity, FeaturesOfInterest)):
-		url = 'http://localhost:8080/SensorThingsServer-1.0/v1.0/FeaturesOfInterest'
-	req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
-	f = urllib2.urlopen(req)
-	responseHeader = f.info().headers[0]
-	f.close()
-	return responseHeader
+def regist(data, serverPath, urltail):
+    print data
+    url = serverPath + '/SensorThingsServer-1.0/v1.0/' + urltail
+    print url
+    req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
+    f = urllib2.urlopen(req)
+    responseHeader = f.info().headers[0]
+    f.close()
+    return responseHeader
 
 def getIOTid(response):
-	location = str(response)
-	idInString = location[location.find("(")+1:location.find(")")]
-	return int(idInString)
-
+    print response
+    lastPart = response.split('/')[-1]
+    idInResponse = int(re.search(r'\d+', lastPart).group())
+    return idInResponse
 
 def getserial():
-  # Extract serial from cpuinfo file
-  cpuserial = "dummy"
-  try:
-    f = open('/proc/cpuinfo','r')
-    for line in f:
-      if line[0:6]=='Serial':
-        cpuserial = line[10:26]
-    f.close()
-  except:
-    cpuserial = "ERROR000000000"
+    # Extract serial from cpuinfo file
+    cpuserial = "dummy"
+    try:
+      f = open('/proc/cpuinfo','r')
+      for line in f:
+        if line[0:6]=='Serial':
+          cpuserial = line[10:26]
+      f.close()
+    except:
+      cpuserial = "ERROR000000000"
 
-  return cpuserial
+    return cpuserial
 
 
-#Set the path variable by the system argument
-path = sys.argv[1]
-
+#Set the path variable based on a config file.
+config = ConfigParser.SafeConfigParser()
+config.read('../config.ini')
+serverPath = 'http://' + str(config.get('server', 'serverPath'))
+print 'registering to ther server at ' + serverPath
 
 #The following create a serie of entities. The identifier on each Raspi is the serial number
 serialNum = getserial()
@@ -53,66 +55,111 @@ gpsCoordinate = GPS().getData()
 geoLocation = Feature(geometry = Point(gpsCoordinate))
 location = Location(serialNum, locationDescripton, geoLocation)
 
-
-#Construct the Sensor entity
-sensor = Sensor("Temperatur Sensor " + serialNum , "The temperature sensor on the Raspi " + serialNum)
-
-#Construct the ObservedProperty entity
-observedProperty = ObservedPropertie("Temperatur", "http://dbpedia.org/page/Dew_point", "Temperature")
-
-#Construct the Thing entity
-thingName = serialNum
-thingDescription = "This is a sourcing node of Rapberry Pi with the serial number " + thingName + "."
-thing = Thing(thingName, thingDescription, location)
-
-thingRes = regist(thing, path)
+#register the thing
+thing = Thing(serialNum, "Sensing node on the raspi with serial number " + serialNum, location)
+thingRes = regist(thing.jsonSerialize(), serverPath, 'Things')
+print thingRes
 thingID = getIOTid(thingRes)
 
-sensorRes = regist(sensor, path)
+#register the sensor
+sensor = Sensor("Temperatur Sensor " + serialNum , "The temperature sensor on the Raspi " + serialNum)
+sensorRes = regist(sensor.jsonSerialize(), serverPath, 'Sensors')
 sensorID = getIOTid(sensorRes)
 
-locationRes = regist(location, path)
+#register the location
+locationRes = regist(location.jsonSerialize(), serverPath, 'Locations')
 locationID = getIOTid(locationRes)
 
-observedPropertyRes = regist(observedProperty, path)
-observedPropertyID = getIOTid(observedPropertyRes)
-
-#Construct the Datastream entity
-unitOfMeaturement =  {
-      "name":
-  "degree Celsius",
-      "symbol":
-  "C",
-      "definition":
-  "http://unitsofmeasure.org/ucum.html#para-30"
+#register the ObservedProperties
+print 'Starting to register the ObservedProperties.'
+properties = ['Temperature', 'temp_in', 'abs_pressure', 'hum_in', 'temp_out', 'wind_dir', 'hum_out', 'wind_gust', 'wind_ave', 'rain']
+definitions = ['', '', '', '', '', '', '', '', '', '']
+descriptions = ['', '', '', '', '', '', '', '', '', '']
+observedPropertiesID = []
+for i in range(10):
+    jsonString = {
+        "name" : properties[i],
+        "definition" : definitions[i],
+        "description" : descriptions[i],
     }
+    print('registering the ' + str(i) + ' observed properties.')
+    res = regist(json.dumps(jsonString), serverPath, 'ObservedProperties')
+    observedPropertiesID.append(getIOTid(res))
 
-dataStream = Datastream("Datastream " + serialNum, 
-	"The datastream measured by the Raspi " + serialNum, 
-	unitOfMeaturement,
-	"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
-	{"@iot.id": thingID}, {"@iot.id": sensorID}, {"@iot.id": observedPropertyID})
-
-dataStreamRes = regist(dataStream, path)
-dataStreamID = getIOTid(dataStreamRes)
-
-
-################################################################
-#Create a FeatureOfInterest
-foI = FeaturesOfInterest("testFOI", "tesi FOI", "applicationvnd.geojson", geoLocation)
-regist(foI)
-
+print 'Starting to register the datastreams.'
+datastreamID = {}
+unitOfMeasurements = [
+    {
+        "name" : "degree Celsius",
+        "symbol" : "C",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "degree Celsius",
+	 "symbol" : "C",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "Pasca",
+	 "symbol" : "Pa",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "Percent",
+	 "symbol" : "%",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "degree Celsius",
+	 "symbol" : "C",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "grade",
+	 "symbol" : "grade",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "Percent",
+	 "symbol" : "%",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "kilometer pro hour",
+	 "symbol" : "km/h",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "kilometer pro hour",
+	 "symbol" : "km/h",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+	{"name" : "minimeter",
+	 "symbol" : "mm",
+	 "definition" : "http://unitsofmeasure.org/ucum.html#para-30"
+	},
+]
+for i in range(10):
+    jsonString = {
+        "name" : "Datastream for " + properties[i],
+        "description" : "The datastram for the measurement of " + properties[i],
+        "unitOfMeasurement" : unitOfMeasurements[i],
+        "observationType" : "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+        "Thing" : { "@iot.id" : 1},
+        "Sensor" : { "@iot.id" : 1},
+        "ObservedProperty" : {"@iot.id" : observedPropertiesID[i]}
+    }
+    print('registering the ' + str(i) + ' datastream.')
+    res = regist(json.dumps(jsonString), serverPath, 'Datastreams')
+    iotId = getIOTid(res)
+    datastreamID.update({properties[i]:iotId})
 
 ################################################################
 #set up the config file
-parser = SafeConfigParser()
+parser = ConfigParser.SafeConfigParser()
 parser.read('../observation.ini')
-parser.set('register', 'dataStreamID', dataStreamID)
-parser.set('register', 'sensorID', sensorID)
-parser.set('register', 'thingID', thingID)
-parser.set('register', 'startLocationID', startLocationID)
-parser.set('register', 'registered', true)
+
+parser.set('register', 'sensorID', str(sensorID))
+parser.set('register', 'thingID', str(thingID))
+parser.set('register', 'startLocationID', str(locationID))
+parser.set('register', 'registered', 'true')
+
+for key,value in datastreamID.items():
+    parser.set('datastreamid', key, str(value))
 
 with open('../observation.ini', 'w') as configfile:
     parser.write(configfile)
+
  

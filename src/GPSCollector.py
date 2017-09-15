@@ -15,15 +15,15 @@ class GPS:
 		self.session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 
 	def getData(self):
-		report = self.session.next()
-		#wait for a 'TPV' report and exact the datata from it
-		while report['class'] != 'TPV':
-		    report = self.session.next()
+		#report = self.session.next()
+		##wait for a 'TPV' report and exact the datata from it
+		#while report['class'] != 'TPV':
+		#    report = self.session.next()
 		
-		longitude = report.__getitem__('lon')
-		latitude = report.__getitem__('lat')
-		result = [int(longitude), int(latitude)]
-		return result
+		#longitude = report.__getitem__('lon')
+		#latitude = report.__getitem__('lat')
+		#result = [int(longitude), int(latitude)]
+		return [1,1]
 
 
 	def synchRaspiTime(self):

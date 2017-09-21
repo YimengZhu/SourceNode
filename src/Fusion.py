@@ -68,7 +68,7 @@ def on_message(client, userdata, msg):
     else: 
         measurements[topic] = measurement
 
-    #4. get the datastream Id based on the observed type    
+    #4. get the meta data for this measurement  
     datastreamID = getDatastreamID(topic)
     foiID = gps.getGridNum()
     timestamp = int(round(time.time() * 1000))

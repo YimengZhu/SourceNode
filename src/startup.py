@@ -1,2 +1,0 @@
-import Temperature
-import WeatherStation

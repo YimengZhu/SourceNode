@@ -14,6 +14,7 @@ import observation_pb2
 dbconnect = sqlite3.connect("../sensorData.db")
 cursor = dbconnect.cursor()
 gps = GPS()
+counter = 0
 
 foi = gps.getGridNum()
 
@@ -32,20 +33,20 @@ measurements = {'Temperature':None,
 
 #The callback for when the client receives a CONNACK response rc from the server.
 def on_connect(client, userdata, flags, rc):
-	print("Connected with result code " + str(rc))
+    print("Connected with result code " + str(rc))
 
-	#Subscribing in on_connect means that if the connection is losed,
-	#the subscription will be renewd on reconnection.
-	client.subscribe("Temperature")
-        client.subscribe("temp_in")
-        client.subscribe("abs_pressure")
-        client.subscribe("hum_in")
-        client.subscribe("temp_out")
-        client.subscribe("wind_dir")
-        client.subscribe("hum_out")
-        client.subscribe("wind_gust")
-        client.subscribe("wind_ave")
-        client.subscribe("rain")
+    #Subscribing in on_connect means that if the connection is losed,
+    #the subscription will be renewd on reconnection.
+    client.subscribe("Temperature")
+    client.subscribe("temp_in")
+    client.subscribe("abs_pressure")
+    client.subscribe("hum_in")
+    client.subscribe("temp_out")
+    client.subscribe("wind_dir")
+    client.subscribe("hum_out")
+    client.subscribe("wind_gust")
+    client.subscribe("wind_ave")
+    client.subscribe("rain")
 
 
 def on_message(client, userdata, msg):
@@ -80,7 +81,9 @@ def on_message(client, userdata, msg):
     del sock
     
     #5. log the raw data to the sqlite database
-    cursor.execute("INSERT INTO rawData VALUES (?,?,?,?)", (timestamp, datastreamID, foiID, measurement))
+    global counter
+    cursor.execute("INSERT INTO observation VALUES (?,?)", (counter, message))
+    counter += 1
     dbconnect.commit()
     
 def getDatastreamID(observedType):

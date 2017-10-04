@@ -1,6 +1,6 @@
 
 from Entity import *
-from GPSCollector import *
+import GPSReader
 from geojson import Point, Feature
 import urllib2
 import os
@@ -51,14 +51,13 @@ serialNum = getserial()
 
 #Construct a new location based on the gps data
 locationDescripton = "The start point of the sourcing node: " + serialNum + "."
-gpsCoordinate = GPS().getData()
+gpsCoordinate = GPSReader.getData()
 geoLocation = Feature(geometry = Point(gpsCoordinate))
 location = Location(serialNum, locationDescripton, geoLocation)
 
 #register the thing
 thing = Thing(serialNum, "Sensing node on the raspi with serial number " + serialNum, location)
 thingRes = regist(thing.jsonSerialize(), serverPath, 'Things')
-print thingRes
 thingID = getIOTid(thingRes)
 
 #register the sensor
@@ -146,20 +145,34 @@ for i in range(10):
     iotId = getIOTid(res)
     datastreamID.update({properties[i]:iotId})
 
+#Register the feature of interest
+foiFeature = {
+    "type" : "Feature",
+    "geometry" : {
+            "type" : "Point",
+            "coordinates" : [0, 0]
+        }
+    }
+foi = FeaturesOfInterest(serialNum, 'The boat with Raspi ' + serialNum, 'application.geo+json', foiFeature)
+foiRes = regist(foi.jsonSerialize(), serverPath, 'FeaturesOfInterest')
+foiId = getIOTid(foiRes)
+print foiId
+
 ################################################################
 #set up the config file
 parser = ConfigParser.SafeConfigParser()
-parser.read('../observation.ini')
+parser.read('../config.ini')
 
 parser.set('register', 'sensorID', str(sensorID))
 parser.set('register', 'thingID', str(thingID))
 parser.set('register', 'startLocationID', str(locationID))
+parser.set('register', 'foi', str(foiId))
 parser.set('register', 'registered', 'true')
 
 for key,value in datastreamID.items():
     parser.set('datastreamid', key, str(value))
 
-with open('../observation.ini', 'w') as configfile:
+with open('../config.ini', 'w') as configfile:
     parser.write(configfile)
 
  

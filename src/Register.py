@@ -168,7 +168,7 @@ parser.set('register', 'thingID', str(thingID))
 parser.set('register', 'startLocationID', str(locationID))
 parser.set('register', 'foi', str(foiId))
 parser.set('register', 'registered', 'true')
-
+parser.set('register', 'serialNum',serialNum)
 for key,value in datastreamID.items():
     parser.set('datastreamid', key, str(value))
 

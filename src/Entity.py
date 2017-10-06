@@ -26,16 +26,12 @@ class Thing(Entity):
 class Location(Entity):
 
 	def __init__(self, name, description, location,
-		thing = None, historical_location = None,
 		encodingType = "applicationvnd.geojson"):
 		#init the properties
 		self.name = name
 		self.description = description
 		self.encodingType = encodingType
 		self.location = location
-		#init the relations
-		self.things = [].append(thing)
-		self.historical_location = [].append(historical_location)
 
 
 

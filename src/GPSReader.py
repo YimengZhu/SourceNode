@@ -68,7 +68,7 @@ def getDistance():
         currentPos = coordinate
         return 0
 
-    distance = math.sqrt(sum([(a - b) ** 2 for a, b in zip(coordinate, current_pos)]))
+    distance = math.sqrt(sum([(a - b) ** 2 for a, b in zip(coordinate, currentPos)]))
     print 'distance to last point is ' + str(distance)
     return distance
 
@@ -85,10 +85,8 @@ def updateLocation():
     config.read('../config.ini')
     
     serialNum = config.get('register', 'serialNum')
-    thingsid = int(config.get('register', 'thingid'))
 
-    location = Location('Location', 'Location coordinate of ' + serialNum, geoLocation, thing ={"@iot.id" : thingsid} )
-
+    location = Location('Location', 'Location coordinate of ' + serialNum, geoLocation)
     publish.single('v1.0/Things', location.jsonSerialize())
     return location
 
@@ -99,17 +97,19 @@ def registerLocation(location):
     print data
     config = ConfigParser.SafeConfigParser()
     config.read('../config.ini')
-    serverPath = 'http://' + str(config.get('server','serverPath')) + '/Locations'
-    
+    thingId = config.get('register', 'thingid')
+    serverPath = 'http://' + str(config.get('server','serverPath')) + '/SensorThingsServer-1.0/v1.0/Things(' + thingId + ')/Locations'
+    print serverPath    
     req = urllib2.Request(serverPath, data, {'Content-Type' : 'application/json'})
     f = urllib2.urlopen(req)
     f.close
     
-
-synchRaspiTime()
-while True:
-    getData()
-    getDistance()
-    location = updateLocation()
-    registerLocation(location)
-#    getGridNum()
+if __name__ == '__main__':
+    synchRaspiTime()
+    while True:
+        getData()
+        getDistance()
+        location = updateLocation()
+        if location != None:
+            registerLocation(location)
+#        getGridNum()

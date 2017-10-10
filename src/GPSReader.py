@@ -10,6 +10,7 @@ import math
 from Entity import Location	
 from geojson import Point, Feature
 import ConfigParser
+import time
 
 session = gps.gps('localhost', '2947')
 session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
@@ -87,7 +88,7 @@ def updateLocation():
     serialNum = config.get('register', 'serialNum')
 
     location = Location('Location', 'Location coordinate of ' + serialNum, geoLocation)
-    publish.single('v1.0/Things', location.jsonSerialize())
+    publish.single('v1.0/Locations', location.jsonSerialize())
     return location
 
 
@@ -112,4 +113,5 @@ if __name__ == '__main__':
         location = updateLocation()
         if location != None:
             registerLocation(location)
+    time.sleep()
 #        getGridNum()

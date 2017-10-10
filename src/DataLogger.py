@@ -1,8 +1,20 @@
 import sqlite3
 import paho.mqtt.client as mqtt
+import csv
+import datetime
 
 dbconnect = sqlite3.connect('../sensorData.db')
 cursor = dbconnect.cursor()
+
+#store the data from last time into a csv and clean them
+data = cursor.execute("SELECT * FROM rawdata")
+csvFile = str(datetime.datetime.now())
+with open('../' + csvFile + '.csv', 'wb') as f:
+    writer = csv.writer(f)
+    writer.writerows(data)
+
+cursor.execute("DELETE FROM rawdata")
+
 
 counter = 1
 

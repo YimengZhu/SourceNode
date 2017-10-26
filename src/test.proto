@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package test;
+
+message Person {
+  required float r = 1;
+  required int64 t = 2;
+  required float x = 3;
+  required float y = 4;
+  required int32 d = 5;
+}
+

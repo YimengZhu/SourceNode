@@ -13,7 +13,7 @@ message ObservationWithCoordinate {
 message ObservationWithGrid {
   required float r = 6;
   required int64 t = 7;
-  required byte g = 8;
+  required bytes g = 8;
   required int32 d = 9;
 }
 

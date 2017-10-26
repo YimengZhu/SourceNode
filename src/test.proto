@@ -2,11 +2,18 @@ syntax = "proto2";
 
 package test;
 
-message Person {
+message ObservationWithCoordinate {
   required float r = 1;
   required int64 t = 2;
   required float x = 3;
   required float y = 4;
   required int32 d = 5;
+}
+
+message ObservationWithGrid {
+  required float r = 6;
+  required int64 t = 7;
+  required byte g = 8;
+  required int32 d = 9;
 }
 

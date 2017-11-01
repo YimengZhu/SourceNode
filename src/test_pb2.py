@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='test.proto',
   package='test',
   syntax='proto2',
-  serialized_pb=_b('\n\ntest.proto\x12\x04test\"R\n\x19ObservationWithCoordinate\x12\t\n\x01r\x18\x01 \x02(\x02\x12\t\n\x01t\x18\x02 \x02(\x03\x12\t\n\x01x\x18\x03 \x02(\x02\x12\t\n\x01y\x18\x04 \x02(\x02\x12\t\n\x01\x64\x18\x05 \x02(\x05\"A\n\x13ObservationWithGrid\x12\t\n\x01r\x18\x06 \x02(\x02\x12\t\n\x01t\x18\x07 \x02(\x03\x12\t\n\x01g\x18\x08 \x02(\x0c\x12\t\n\x01\x64\x18\t \x02(\x05')
+  serialized_pb=_b('\n\ntest.proto\x12\x04test\"R\n\x19ObservationWithCoordinate\x12\t\n\x01r\x18\x01 \x02(\x02\x12\t\n\x01t\x18\x02 \x02(\x03\x12\t\n\x01x\x18\x03 \x02(\x02\x12\t\n\x01y\x18\x04 \x02(\x02\x12\t\n\x01\x64\x18\x05 \x02(\x05\"A\n\x13ObservationWithGrid\x12\t\n\x01r\x18\x06 \x02(\x02\x12\t\n\x01t\x18\x07 \x02(\x03\x12\t\n\x01g\x18\x08 \x02(\t\x12\t\n\x01\x64\x18\t \x02(\x05')
 )
 
 
@@ -107,8 +107,8 @@ _OBSERVATIONWITHGRID = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='g', full_name='test.ObservationWithGrid.g', index=2,
-      number=8, type=12, cpp_type=9, label=2,
-      has_default_value=False, default_value=_b(""),
+      number=8, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),

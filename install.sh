@@ -46,7 +46,8 @@ pip install paho-mqtt
 pip install numpy
 #protocol buffer
 pip install protobuf
-
+#install pywws
+pip install pywws
 
 ##############################################################
 #Install the gps dependencies

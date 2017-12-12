@@ -48,3 +48,5 @@ To collect data from gps, run
 Add link to sensor things api
 Thank pywws
 Write a seperate shell script to add the startup python script 
+Write the other wifi transfer mannual
+Puffer all the data in sd card and send only few of them periodlly. Period should be set up.

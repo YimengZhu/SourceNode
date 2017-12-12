@@ -42,7 +42,14 @@ To collect data from WS1080, run
 To collect data from gps, run
 `python GPSReader.py`
 
-
+## Transmit data with Lora GPS Hat from Dragino
+First compile the c++ programm for the Lora GPS Hat
+`cd lora_gps_hat/examples/periodc
+make clean
+make
+`
+Run the python script to listen on the mqtt broker, compress the data and send it via Lora GPS Hat 
+`python Compression.py`
 
 ##TO DO:
 Add link to sensor things api
